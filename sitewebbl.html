@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste Néon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Effet de grille néon en arrière-plan */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        /* En-tête */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00ff00;
+            text-shadow: 
+                0 0 10px #00ff00,
+                0 0 20px #00ff00,
+                0 0 30px #00ff00,
+                0 0 40px #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px #00ff00,
+                    0 0 20px #00ff00,
+                    0 0 30px #00ff00,
+                    0 0 40px #00ff00;
+            }
+            50% {
+                text-shadow: 
+                    0 0 15px #00ff00,
+                    0 0 30px #00ff00,
+                    0 0 45px #00ff00,
+                    0 0 60px #00ff00;
+            }
+        }
+
+        /* Bouton de connexion */
+        .btn-login {
+            background: #000000;
+            border: 2px solid #064406ff;
+            color: #00ff00;
+            padding: 12px 30px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .btn-login:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.8),
+                inset 0 0 10px rgba(0, 255, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        /* Liste des noms */
+        .name-list {
+            background: #000000;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.5),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+
+        .name-item {
+            background: #000000;
+            border: 1px solid #00ff00;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .name-item:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+            transform: translateX(5px);
+        }
+
+        .name-text {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        /* Bouton supprimer */
+        .btn-delete {
+            background: #000000;
+            border: 1px solid #1606fd;
+            color: #f01414;
+            padding: 5px 15px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .btn-delete:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+        }
+
+        /* Formulaire d'ajout */
+        .add-form {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: #000000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 12px;
+            font-size: 1em;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(0, 255, 0, 0.5);
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+        }
+
+        .btn-add {
+            background: #000000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 12px 25px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .btn-add:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+        }
+
+        /* Modal de connexion */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #000000;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 0, 0.8),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+
+        .modal-content h2 {
+            color: #00ff00;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00ff00;
+            margin-bottom: 8px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: #000000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 12px;
+            font-size: 1em;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn-submit, .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: #000000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .btn-submit:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+        }
+
+        .btn-cancel {
+            background: #000000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .btn-cancel:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+        }
+
+        .logged-in-info {
+            display: none;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .btn-logout {
+            background: #000000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>✨ LISTE DES BLACKLIST ✨</h1>
+        <div>
+            <button class="btn-login" id="loginBtn">Se connecter</button>
+            <div class="logged-in-info" id="loggedInInfo">
+                <span class="user-name" id="userName"></span>
+                <button class="btn-logout" id="logoutBtn">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="name-list">
+            <h2 style="color: #00ff00; text-shadow: 0 0 10px #00ff00; margin-bottom: 20px;">📋 Liste des Blacklist</h2>
+          <div id="namesList">
+                
+
+            <div class="add-form" id="addForm">
+                <div class="input-group">
+                    <input type="text" id="newName" placeholder="ADD BLACKLIST">
+                    <button class="btn-add" onclick="addName()">➕ Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de connexion -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>🔐 CONNEXION</h2>
+            <div class="form-group">
+                <label>Identifiant</label>
+                <input type="text" id="username" placeholder="ID">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="password" placeholder="PASSWORD">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-submit" onclick="login()">Connexion</button>
+                <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+
+        // Identifiants (dans un vrai projet, utilisez un backend sécurisé)
+        const credentials = {
+            username: 'SPORTBACK57' , 
+            password: '07022012'
+        };
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            document.getElementById('loginModal').style.display = 'flex';
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === credentials.username && password === credentials.password) {
+                isLoggedIn = true;
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('loggedInInfo').style.display = 'flex';
+                document.getElementById('userName').textContent = `👤 ${username}`;
+                document.getElementById('addForm').style.display = 'block';
+                
+                // Afficher les boutons de suppression
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.style.display = 'inline-block';
+                });
+
+                closeModal();
+                alert('✅ Connexion réussie !');
+            } else {
+                alert('❌ Identifiant ou mot de passe incorrect !');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            document.getElementById('loginBtn').style.display = 'inline-block';
+            document.getElementById('loggedInInfo').style.display = 'none';
+            document.getElementById('addForm').style.display = 'none';
+            
+            // Cacher les boutons de suppression
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.style.display = 'none';
+            });
+
+            alert('👋 Déconnexion réussie !');
+        }
+
+        function addName() {
+            const nameInput = document.getElementById('newName');
+            const name = nameInput.value.trim();
+
+            if (name === '') {
+                alert('⚠️ Veuillez entrer un nom !');
+                return;
+            }
+
+            const namesList = document.getElementById('namesList');
+            const newItem = document.createElement('div');
+            newItem.className = 'name-item';
+            newItem.innerHTML = `
+                <span class="name-text">${name}</span>
+                <button class="btn-delete" onclick="deleteName(this)" style="display: inline-block;">✖ Supprimer</button>
+            `;
+
+            namesList.appendChild(newItem);
+            nameInput.value = '';
+            
+            // Animation d'apparition
+            newItem.style.opacity = '0';
+            setTimeout(() => {
+                newItem.style.transition = 'opacity 0.5s';
+                newItem.style.opacity = '1';
+            }, 10);
+        }
+
+        function deleteName(button) {
+            if (confirm('🗑️ Voulez-vous vraiment supprimer ce nom ?')) {
+                const item = button.parentElement;
+                item.style.transition = 'all 0.3s';
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-50px)';
+                
+                setTimeout(() => {
+                    item.remove();
+                }, 300);
+            }
+        }
+
+        // Permettre d'ajouter avec la touche Entrée
+        document.getElementById('newName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addName();
+            }
+        });
+
+        // Permettre de se connecter avec la touche Entrée
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>  
